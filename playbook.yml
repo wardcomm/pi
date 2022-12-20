@@ -4,94 +4,106 @@
   become: yes
   gather_facts: true
 
-  password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          66636338326162646162383338393033656363623635373732333131303861323238363530616534
-          3534383538393737366538623337363763633036613931370a666136366236643339323962626265
-          39313737373264616634363465346537393566313863383261653863633966623132646161383037
-          6139363064623661320a316130393738366665366531643934666265313265353531626430303137
-          37643931326139646439666432373564373733383738363966366638396462646262
+  # password: !vault |
+  #         $ANSIBLE_VAULT;1.1;AES256
+  #         66636338326162646162383338393033656363623635373732333131303861323238363530616534
+  #         3534383538393737366538623337363763633036613931370a666136366236643339323962626265
+  #         39313737373264616634363465346537393566313863383261653863633966623132646161383037
+  #         6139363064623661320a316130393738366665366531643934666265313265353531626430303137
+  #         37643931326139646439666432373564373733383738363966366638396462646262
 
   tasks:
-    - name: Create a group ansible if it does not exist
-      ansible.builtin.group:
-        name: ansible
+    # - name: Create a group ansible if it does not exist
+    #   ansible.builtin.group:
+    #     name: ansible
+    #     state: present
+    #     gid: 5100
+
+    # - name: Add the user  with a bash shell, appending the group 'admins' and 'developers' to the user's groups
+    #   ansible.builtin.user:
+    #     name: '{{ item }}'
+    #     shell: /bin/bash
+    #     groups: ansible
+    #     append: yes
+    #     password: "{{ password | password_hash('sha512') }}"
+    #     update_password: on_create
+    #     create_home: yes
+    #   loop:
+    #     -  chad
+    #     -  ansible
+
+    # - name: Add the user  with a bash shell, appending the group 'admins' and 'developers' to the user's groups
+    #   ansible.builtin.user:
+    #     name: '{{ item }}'
+    #     shell: /bin/bash
+    #     groups: wheel
+    #     append: yes
+    #     password: "{{ password | password_hash('sha512') }}" 
+    #     update_password: on_create
+    #     create_home: yes
+    #   loop:
+    #     -  chad
+        -  ansible
+
+    # - name: Create a  directory if it does not exist
+    #   ansible.builtin.file:
+    #     path: '{{ item }}'
+    #     state: directory
+    #     mode: '0775'
+    #     owner: ec2-user
+    #     group: ansible
+    #   loop:
+    #     -  /ansible
+    #     -  /ansible/files
+    #     -  /ansible/scripts
+    #     -  /ansible/backup
+
+    # - name: Replace /etc/ssh/sshd_config entry PubkeyAuthentication no
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/ssh/sshd_config
+    #     regex: 'PubkeyAuthentication yes'
+    #     line: PubkeyAuthentication yes
+    #     owner: root
+    #     group: root
+    #     mode: '0600'
+    #     backup: true
+
+    # - name: Replace /etc/ssh/sshd_config entry PasswordAuthentication yes
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/ssh/sshd_config
+    #     regex: 'PasswordAuthentication no'
+    #     line: PasswordAuthentication yes
+    #     owner: root
+    #     group: root
+    #     mode: '0600'
+    #     backup: true
+
+    # - name: Replace  /etc/ssh/sshd_config entry PasswordAuthentication yes
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/ssh/sshd_config
+    #     regex: '#PasswordAuthentication yes'
+    #     line: PasswordAuthentication yes
+    #     owner: root
+    #     group: root
+    #     mode: '0600'
+    #     backup: true
+
+    # - name: reload service sshd
+    #   ansible.builtin.service:
+    #     name: sshd
+    #     state: reloaded
+    - name: add mate-desktop-environment
+      ansible.builtin.apt:
+        name: mate-desktop-environment
         state: present
-        gid: 5100
 
-    - name: Add the user  with a bash shell, appending the group 'admins' and 'developers' to the user's groups
-      ansible.builtin.user:
-        name: '{{ item }}'
-        shell: /bin/bash
-        groups: ansible
-        append: yes
-        password: "{{ password | password_hash('sha512') }}"
-        update_password: on_create
-        create_home: yes
-      loop:
-        -  chad
-        -  ansible
+    - name: add mate-desktop-environment-extras
+      ansible.builtin.apt:
+        name: mate-desktop-environment-extras
+        state: present
 
-    - name: Add the user  with a bash shell, appending the group 'admins' and 'developers' to the user's groups
-      ansible.builtin.user:
-        name: '{{ item }}'
-        shell: /bin/bash
-        groups: wheel
-        append: yes
-        password: "{{ password | password_hash('sha512') }}" 
-        update_password: on_create
-        create_home: yes
-      loop:
-        -  chad
-        -  ansible
-
-    - name: Create a  directory if it does not exist
-      ansible.builtin.file:
-        path: '{{ item }}'
-        state: directory
-        mode: '0775'
-        owner: ec2-user
-        group: ansible
-      loop:
-        -  /ansible
-        -  /ansible/files
-        -  /ansible/scripts
-        -  /ansible/backup
-
-    - name: Replace /etc/ssh/sshd_config entry PubkeyAuthentication no
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regex: 'PubkeyAuthentication yes'
-        line: PubkeyAuthentication yes
-        owner: root
-        group: root
-        mode: '0600'
-        backup: true
-
-    - name: Replace /etc/ssh/sshd_config entry PasswordAuthentication yes
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regex: 'PasswordAuthentication no'
-        line: PasswordAuthentication yes
-        owner: root
-        group: root
-        mode: '0600'
-        backup: true
-
-    - name: Replace  /etc/ssh/sshd_config entry PasswordAuthentication yes
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regex: '#PasswordAuthentication yes'
-        line: PasswordAuthentication yes
-        owner: root
-        group: root
-        mode: '0600'
-        backup: true
-
-    - name: reload service sshd
-      ansible.builtin.service:
-        name: sshd
-        state: reloaded
+    - name: Unconditionally reboot the machine with all defaults
+      ansible.builtin.reboot:
 
 # - name: remove python3
 #   ansible.builtin.yum:
